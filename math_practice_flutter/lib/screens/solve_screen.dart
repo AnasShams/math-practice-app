@@ -195,7 +195,10 @@ class _SolveScreenState extends ConsumerState<SolveScreen> {
         List<Map<String, dynamic>> steps = [];
 
         for (int i = 0; i < _stepDrawControllers.length; i++) {
-          if (_stepDrawControllers[i].isEmpty) {
+          final hasHandwriting = !_stepDrawControllers[i].isEmpty ||
+              !_stepEraserControllers[i].isEmpty ||
+              _stepBackgroundImages[i] != null;
+          if (!hasHandwriting) {
             steps.add({
               'stepNumber': i + 1,
               'imageBase64': ''
