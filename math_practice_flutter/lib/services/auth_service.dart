@@ -18,13 +18,19 @@ class AuthService extends ChangeNotifier {
     required String fullName,
     required int gradeId,
   }) async {
-    await _supabase.auth.signUp(
+    final response = await _supabase.auth.signUp(
       email: email,
       password: password,
       data: {
         'full_name': fullName,
       },
     );
+
+    if (response.user != null &&
+        (response.user!.identities == null ||
+            response.user!.identities!.isEmpty)) {
+      throw 'An account with this email already exists. Please log in or reset your password.';
+    }
   }
 
   Future<void> signIn({
@@ -41,5 +47,9 @@ class AuthService extends ChangeNotifier {
   Future<void> signOut() async {
     await _supabase.auth.signOut();
     notifyListeners();
+  }
+
+  Future<void> resetPassword(String email) async {
+    await _supabase.auth.resetPasswordForEmail(email);
   }
 }
